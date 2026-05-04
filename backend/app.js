@@ -2,11 +2,13 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-import { getUsers, getUser, getUserPosts } from "./database.js";
+import cors from "cors";
+import { getUsers, getUser, getUserPosts, getLoggedUser } from "./database.js";
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -18,6 +20,12 @@ app.use(cookieParser());
 app.get("/users", async (req, res) => {
   const users = await getUsers();
   res.send(users);
+});
+
+app.get("/me", authenticateToken, async (req, res) => {
+  const user = await getLoggedUser(req.username);
+  user.token = req.token;
+  res.send(user);
 });
 
 app.post("/login", async (req, res) => {
@@ -34,8 +42,17 @@ app.post("/login", async (req, res) => {
   const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
   res.cookie("token", accessToken, {
     httpOnly: true,
+    sameSite: "lax",
   });
   res.json({ accessToken: accessToken });
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "lax",
+  });
+  res.send({ message: "Logged out" });
 });
 
 app.get("/posts", authenticateToken, async (req, res) => {
@@ -54,6 +71,7 @@ function authenticateToken(req, res, next) {
   try {
     const decoded = jwt.decode(token);
     req.username = decoded.username;
+    req.token = token;
     next();
   } catch (err) {
     res.clearCookie("token");

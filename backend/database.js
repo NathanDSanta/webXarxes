@@ -19,6 +19,15 @@ export async function getUsers() {
   return rows;
 }
 
+export async function getLoggedUser(username) {
+  const [rows] = await pool.query(`
+    SELECT *
+    FROM users
+    WHERE username='${username}'
+  `);
+  return rows[0];
+}
+
 export async function getUser(username, password) {
   const [rows] = await pool.query(`
     SELECT *
@@ -31,7 +40,7 @@ export async function getUser(username, password) {
 export async function getUserPosts(username) {
   const [rows] = await pool.query(`
     SELECT *
-    FROM post
+    FROM posts
     WHERE username='${username}'
   `);
   return rows;

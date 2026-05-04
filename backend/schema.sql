@@ -2,7 +2,8 @@ CREATE DATABASE webXarxes;
 USE webXarxes;
 
 CREATE TABLE users (
-  username VARCHAR(24)  PRIMARY KEY,
+  id integer PRIMARY KEY AUTO_INCREMENT,
+  username VARCHAR(24) UNIQUE NOT NULL,
   password VARCHAR(24) NOT NULL,
   role VARCHAR(10) NOT NULL
 );
@@ -14,7 +15,7 @@ VALUES
 ('user1', 'password123', 'user'),
 ('user2', 'password456', 'user');
 
-CREATE TABLE post (
+CREATE TABLE posts (
   id integer PRIMARY KEY AUTO_INCREMENT,
   title VARCHAR(24) NOT NULL,
   content TEXT NOT NULL,
@@ -22,7 +23,7 @@ CREATE TABLE post (
   FOREIGN KEY (username) REFERENCES users(username)
 );
 
-INSERT INTO post(title, content, username)
+INSERT INTO posts(title, content, username)
 VALUES
 ('Post1', 'some content', 'user1'),
 ('User 2 post', 'some post 2 content', 'user2'),
