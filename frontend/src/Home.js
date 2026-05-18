@@ -9,7 +9,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:8080/me", { credentials: "include" })
+    fetch("http://1.1.1.1:8080/me", { credentials: "include" })
       .then((res) => {
         if (res.status === 401 || res.status === 403) {
           navigate("/");
@@ -20,13 +20,13 @@ export default function Home() {
       .then((data) => data && setUser(data))
       .catch(() => navigate("/"));
 
-    fetch("http://localhost:8080/posts", { credentials: "include" })
+    fetch("http://1.1.1.1:8080/posts", { credentials: "include" })
       .then((res) => res.json())
       .then((data) => setPosts(data));
   }, [navigate]);
 
   const handleLogout = async () => {
-    await fetch("http://localhost:8080/logout", {
+    await fetch("http://1.1.1.1:8080/logout", {
       method: "POST",
       credentials: "include",
     });

@@ -14,7 +14,7 @@ export default function Login() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:8080/login", {
+      const res = await fetch("http://1.1.1.1:8080/login", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
